@@ -5,6 +5,7 @@ import com.xenris.game.*;
 import com.xenris.game.server.Server;
 
 public class Client extends Bluetooth implements ServerConnection.Callbacks, View.OnTouchListener {
+    private View gMenuView;
     private GameView gGameView;
     private Server gServer;
     private ServerConnection gServerConnection;
@@ -17,6 +18,8 @@ public class Client extends Bluetooth implements ServerConnection.Callbacks, Vie
         gGameView = new GameView(this);
         addView(gGameView);
         gGameView.setOnTouchListener(this);
+
+        gMenuView = addView(R.layout.game_menu);
 
         gServer = new Server();
         gServerConnection = gServer.createConnection(this);
@@ -57,5 +60,17 @@ public class Client extends Bluetooth implements ServerConnection.Callbacks, Vie
         gServerConnection.sendPlayerState(gMe);
 
         return true;
+    }
+
+    public void buttonHandler(View view) {
+        final int id = view.getId();
+
+        if(id == R.id.go_button) {
+            go();
+        }
+    }
+
+    private void go() {
+        gMenuView.setVisibility(View.INVISIBLE);
     }
 }
