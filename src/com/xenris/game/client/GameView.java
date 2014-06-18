@@ -5,14 +5,20 @@ import android.graphics.*;
 import android.view.*;
 import com.xenris.game.*;
 
-public class GameView extends SurfaceView implements SurfaceHolder.Callback {
+public class GameView extends Network implements SurfaceHolder.Callback {
+    private SurfaceView gSurfaceView;
     private GameState gGameState;
     private RenderThread gRenderThread;
 
-    public GameView(Context context) {
-        super(context);
+    @Override
+    public void onCreate() {
+        super.onCreate();
 
-        final SurfaceHolder surfaceHolder = getHolder();
+        gSurfaceView = new SurfaceView(this);
+
+        addView(gSurfaceView);
+
+        final SurfaceHolder surfaceHolder = gSurfaceView.getHolder();
         surfaceHolder.addCallback(this);
     }
 
@@ -26,7 +32,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             while(running) {
                 synchronized (this) {
                     if(gGameState != null) {
-                        final SurfaceHolder surfaceHolder = getHolder();
+                        final SurfaceHolder surfaceHolder = gSurfaceView.getHolder();
                         final Canvas canvas = surfaceHolder.lockCanvas();
                         if(canvas != null) {
                             onDraw(canvas);
@@ -44,7 +50,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         }
     }
 
-    public void setGameState(GameState gameState) {
+    public void setGameStateForDrawing(GameState gameState) {
         synchronized (this) {
             gGameState = gameState;
         }
@@ -63,7 +69,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         Util.join(gRenderThread);
     }
 
-    @Override
     public void onDraw(Canvas canvas) {
         if(gGameState != null) {
             canvas.drawColor(Color.GREEN);
@@ -71,5 +76,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         } else {
             canvas.drawColor(Color.RED);
         }
+    }
+
+    protected void setOnTouchListener(View.OnTouchListener listener) {
+        gSurfaceView.setOnTouchListener(listener);
     }
 }

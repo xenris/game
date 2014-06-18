@@ -4,9 +4,7 @@ import android.view.*;
 import com.xenris.game.*;
 import com.xenris.game.server.Server;
 
-public class Client extends Network implements ServerConnection.Callbacks, View.OnTouchListener {
-    private View gMenuView;
-    private GameView gGameView;
+public class Client extends MenuView implements ServerConnection.Callbacks, View.OnTouchListener {
     private Server gServer;
     private ServerConnection gServerConnection;
     private PlayerState gMe;
@@ -15,11 +13,7 @@ public class Client extends Network implements ServerConnection.Callbacks, View.
     public void onCreate() {
         super.onCreate();
 
-        gGameView = new GameView(this);
-        addView(gGameView);
-        gGameView.setOnTouchListener(this);
-
-        gMenuView = addView(R.layout.game_menu);
+        setOnTouchListener(this);
 
         gServer = new Server();
         gServerConnection = gServer.createConnection(this);
@@ -29,7 +23,7 @@ public class Client extends Network implements ServerConnection.Callbacks, View.
 
     @Override
     public void onNewGameState(GameState gameState) {
-        gGameView.setGameState(gameState);
+        setGameStateForDrawing(gameState);
     }
 
     @Override
@@ -84,7 +78,7 @@ public class Client extends Network implements ServerConnection.Callbacks, View.
     }
 
     private void go() {
-        gMenuView.setVisibility(View.INVISIBLE);
+        menuViewVisible(false);
     }
 
     private void share() {
