@@ -9,7 +9,14 @@ public class ServerConnection extends Thread {
     private DataOutputStream gDataOutputStream;
     private DataInputStream gDataInputStream;
 
+    public ServerConnection() {
+    }
+
     public ServerConnection(OutputStream outputStream, InputStream inputStream, Callbacks callbacks) {
+        init(outputStream, inputStream, callbacks);
+    }
+
+    protected void init(OutputStream outputStream, InputStream inputStream, Callbacks callbacks) {
         gCallbacks = callbacks;
 
         gDataOutputStream = new DataOutputStream(outputStream);

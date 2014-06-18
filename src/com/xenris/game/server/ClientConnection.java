@@ -11,7 +11,14 @@ public class ClientConnection extends Thread {
     private PlayerState gPlayerStateB;
     private boolean gIsClosed = false;
 
+    public ClientConnection() {
+    }
+
     public ClientConnection(OutputStream outputStream, InputStream inputStream) {
+        init(outputStream, inputStream);
+    }
+
+    public void init(OutputStream outputStream, InputStream inputStream) {
         gConnectionId = Util.getNextId();
 
         gDataOutputStream = new DataOutputStream(outputStream);

@@ -4,7 +4,7 @@ import android.view.*;
 import com.xenris.game.*;
 import com.xenris.game.server.Server;
 
-public class Client extends Bluetooth implements ServerConnection.Callbacks, View.OnTouchListener {
+public class Client extends Network implements ServerConnection.Callbacks, View.OnTouchListener {
     private View gMenuView;
     private GameView gGameView;
     private Server gServer;
@@ -35,6 +35,7 @@ public class Client extends Bluetooth implements ServerConnection.Callbacks, Vie
     @Override
     public void onDestroy() {
         gServerConnection.close();
+        stopSharing();
 
         super.onDestroy();
     }
@@ -62,15 +63,35 @@ public class Client extends Bluetooth implements ServerConnection.Callbacks, Vie
         return true;
     }
 
+    @Override
+    public void onConnectionMade(ServerConnection serverConnection) {
+        // XXX Make sure this doesn't cause a crash.
+        gServer = null;
+        gServerConnection.close();
+        gServerConnection = serverConnection;
+    }
+
     public void buttonHandler(View view) {
         final int id = view.getId();
 
         if(id == R.id.go_button) {
             go();
+        } else if(id == R.id.share_button) {
+            share();
+        } else if(id == R.id.find_button) {
+            find();
         }
     }
 
     private void go() {
         gMenuView.setVisibility(View.INVISIBLE);
+    }
+
+    private void share() {
+        startSharing(gServer);
+    }
+
+    private void find() {
+        openSearchDialog(this);
     }
 }

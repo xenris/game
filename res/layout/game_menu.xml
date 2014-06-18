@@ -18,4 +18,18 @@ android:background="#000">
     android:text="Go"
     android:onClick="buttonHandler"/>
 
+    <Button
+    android:id="@+id/share_button"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Share"
+    android:onClick="buttonHandler"/>
+
+    <Button
+    android:id="@+id/find_button"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Find"
+    android:onClick="buttonHandler"/>
+
 </LinearLayout>
