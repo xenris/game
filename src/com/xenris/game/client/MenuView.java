@@ -13,7 +13,8 @@ public class MenuView extends GameView {
         gMenuView = addView(R.layout.game_menu);
     }
 
+    // Screen flickers if set to INVISIBLE.
     protected void menuViewVisible(boolean visible) {
-        gMenuView.setVisibility(visible ? View.VISIBLE : View.INVISIBLE);
+        gMenuView.setVisibility(visible ? View.VISIBLE : View.GONE);
     }
 }
