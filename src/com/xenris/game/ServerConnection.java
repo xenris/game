@@ -1,6 +1,5 @@
-package com.xenris.game.client;
+package com.xenris.game;
 
-import com.xenris.game.*;
 import java.io.*;
 
 public class ServerConnection extends Thread {
@@ -34,6 +33,8 @@ public class ServerConnection extends Thread {
 
     @Override
     public void run() {
+        setName("ServerConnection");
+
         while(true) {
             GameState gameState = null;
 
@@ -49,9 +50,9 @@ public class ServerConnection extends Thread {
         close();
     }
 
-    public void sendPlayerState(PlayerState playerState) {
+    public void sendClientInfo(ClientInfo clientInfo) {
         try {
-            playerState.write(gDataOutputStream);
+            clientInfo.write(gDataOutputStream);
         } catch (IOException e) {
             Log.message(Log.tag, "Error: failed to send player state in ServerConnection");
         }

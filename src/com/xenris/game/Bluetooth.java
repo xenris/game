@@ -1,18 +1,17 @@
-package com.xenris.game.client;
+package com.xenris.game;
 
+import android.app.*;
 import android.bluetooth.*;
 import android.content.*;
-import com.xenris.game.*;
-import com.xenris.game.server.*;
 import java.io.*;
 
-public class Bluetooth extends BaseActivity {
+public class Bluetooth {
     private BluetoothAdapter gBluetoothAdapter;
     private AcceptThread gAcceptThread;
+    private Activity gActivity;
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
+    public Bluetooth(Activity activity) {
+        gActivity = activity;
 
         gBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
@@ -32,7 +31,7 @@ public class Bluetooth extends BaseActivity {
     protected void enableBluetooth(boolean enable) {
         if(enable) {
             final Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivityForResult(intent, Constants.REQUEST_ENABLE_BLUETOOTH);
+            gActivity.startActivityForResult(intent, Constants.REQUEST_ENABLE_BLUETOOTH);
         } else {
             // TODO Turn bluetooth off.
         }
@@ -40,14 +39,14 @@ public class Bluetooth extends BaseActivity {
 
     protected void startSearching() {
         final IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-        registerReceiver(receiver, filter);
+        gActivity.registerReceiver(receiver, filter);
         gBluetoothAdapter.startDiscovery();
     }
 
     protected void stopsearching() {
         gBluetoothAdapter.cancelDiscovery();
         try {
-            unregisterReceiver(receiver);
+            gActivity.unregisterReceiver(receiver);
         } catch (IllegalArgumentException e) { }
     }
 
@@ -55,16 +54,16 @@ public class Bluetooth extends BaseActivity {
         new CreateConnection(bluetoothDevice, callbacks);
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(requestCode == Constants.REQUEST_ENABLE_BLUETOOTH) {
-            // Bluetooth has been enabled.
-        } else if(requestCode == Constants.START_SHARING) {
-            gAcceptThread.start();
-        } else {
-            super.onActivityResult(requestCode, resultCode, data);
-        }
-    }
+//    @Override
+//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        if(requestCode == Constants.REQUEST_ENABLE_BLUETOOTH) {
+//            // Bluetooth has been enabled.
+//        } else if(requestCode == Constants.START_SHARING) {
+//            gAcceptThread.start();
+//        } else {
+//            super.onActivityResult(requestCode, resultCode, data);
+//        }
+//    }
 
     private final BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
@@ -116,7 +115,7 @@ public class Bluetooth extends BaseActivity {
             gAcceptThread = new AcceptThread(server);
             Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
             intent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 200);
-            startActivityForResult(intent, Constants.START_SHARING);
+            gActivity.startActivityForResult(intent, Constants.START_SHARING);
         }
     }
 

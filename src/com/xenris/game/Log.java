@@ -6,4 +6,8 @@ public class Log {
     public static void message(String t, String s) {
         android.util.Log.i(t, s);
     }
+
+    public static void message(String s) {
+        android.util.Log.i(tag, s);
+    }
 }

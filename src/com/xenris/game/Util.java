@@ -1,5 +1,6 @@
 package com.xenris.game;
 
+import android.os.*;
 import java.io.*;
 
 public class Util {
@@ -35,4 +36,17 @@ public class Util {
 
         return false;
     }
+
+//    public static Thread createSimpleCallbackThread(final Handler.Callback callback) {
+//        return new Thread() {
+//            @Override
+//            public void run() {
+//                Looper.prepare();
+
+//                gGameThreadHandler = new Handler(callback);
+
+//                Looper.loop();
+//            }
+//        };
+//    }
 }

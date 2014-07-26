@@ -1,25 +1,18 @@
-package com.xenris.game.client;
+package com.xenris.game;
 
 import android.content.*;
 import android.graphics.*;
 import android.view.*;
-import com.xenris.game.*;
 
-public class GameView extends Network implements SurfaceHolder.Callback {
-    private SurfaceView gSurfaceView;
+public class GameView extends SurfaceView implements SurfaceHolder.Callback {
+//    private SurfaceView gSurfaceView;
     private GameState gGameState;
     private RenderThread gRenderThread;
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
+    public GameView(Context context) {
+        super(context);
 
-        gSurfaceView = new SurfaceView(this);
-
-        addView(gSurfaceView);
-
-        final SurfaceHolder surfaceHolder = gSurfaceView.getHolder();
-        surfaceHolder.addCallback(this);
+        getHolder().addCallback(this);
     }
 
     private class RenderThread extends Thread {
@@ -27,16 +20,17 @@ public class GameView extends Network implements SurfaceHolder.Callback {
 
         @Override
         public void run() {
+            setName("RenderThread");
+
             running = true;
 
             while(running) {
                 synchronized (this) {
                     if(gGameState != null) {
-                        final SurfaceHolder surfaceHolder = gSurfaceView.getHolder();
-                        final Canvas canvas = surfaceHolder.lockCanvas();
+                        final Canvas canvas = getHolder().lockCanvas();
                         if(canvas != null) {
                             onDraw(canvas);
-                            surfaceHolder.unlockCanvasAndPost(canvas);
+                            getHolder().unlockCanvasAndPost(canvas);
                         }
                     }
                 }
@@ -50,8 +44,8 @@ public class GameView extends Network implements SurfaceHolder.Callback {
         }
     }
 
-    public void setGameStateForDrawing(GameState gameState) {
-        synchronized (this) {
+    public void setGameStateToDraw(GameState gameState) {
+        synchronized(this) {
             gGameState = gameState;
         }
     }
@@ -76,9 +70,5 @@ public class GameView extends Network implements SurfaceHolder.Callback {
         } else {
             canvas.drawColor(Color.RED);
         }
-    }
-
-    protected void setOnTouchListener(View.OnTouchListener listener) {
-        gSurfaceView.setOnTouchListener(listener);
     }
 }

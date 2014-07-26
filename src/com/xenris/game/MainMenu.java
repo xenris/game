@@ -2,7 +2,6 @@ package com.xenris.game;
 
 import android.content.*;
 import android.view.*;
-import com.xenris.game.client.Client;
 
 public class MainMenu extends BaseActivity {
     @Override

@@ -5,44 +5,61 @@ import java.io.*;
 import java.util.*;
 
 public class GameState {
-    private ArrayList<PlayerState> gPlayerStates;
+    public static final int MAIN_MENU = 1;
+    public static final int COUNTDOWN = 2;
+    public static final int IN_PLAY = 3;
+
+    private ArrayList<ClientInfo> gClientInfos;
+    private int gState = MAIN_MENU;
+//    private boolean gGameIsAboutToStart;
+//    private boolean gGameIsInPlay;
 
     public GameState() {
-        gPlayerStates = new ArrayList<PlayerState>();
+        gClientInfos = new ArrayList<ClientInfo>();
     }
 
     public GameState(DataInputStream dataInputStream) throws IOException {
-        gPlayerStates = new ArrayList<PlayerState>();
+        gClientInfos = new ArrayList<ClientInfo>();
 
         final int playerCount = dataInputStream.readInt();
 
         for(int i = 0; i < playerCount; i++) {
-            gPlayerStates.add(new PlayerState(dataInputStream));
+            gClientInfos.add(new ClientInfo(dataInputStream));
         }
+
+        gState = dataInputStream.readInt();
+
+//        gGameIsAboutToStart = dataInputStream.readBoolean();
+//        gGameIsInPlay = dataInputStream.readBoolean();
     }
 
     public void write(DataOutputStream dataOutputStream) throws IOException {
-        dataOutputStream.writeInt(gPlayerStates.size());
+        dataOutputStream.writeInt(gClientInfos.size());
 
-        for(PlayerState playerState : gPlayerStates) {
+        for(ClientInfo playerState : gClientInfos) {
             playerState.write(dataOutputStream);
         }
+
+        dataOutputStream.writeInt(gState);
+
+//        dataOutputStream.writeBoolean(gGameIsAboutToStart);
+//        dataOutputStream.writeBoolean(gGameIsInPlay);
     }
 
-    public void addPlayerState(int id) {
-        gPlayerStates.add(new PlayerState(id));
+    public void addClientInfo(int id) {
+        gClientInfos.add(new ClientInfo(id));
     }
 
-    public void setPlayerState(PlayerState newPlayerState) {
-        final int id = newPlayerState.getId();
-        final PlayerState playerState = findPlayerStateById(id);
+    public void updateClientInfo(ClientInfo newClientInfo) {
+        final int id = newClientInfo.getId();
+        final ClientInfo playerState = findClientInfoById(id);
         if(playerState != null) {
-            playerState.setValues(newPlayerState);
+            playerState.setValues(newClientInfo);
         }
     }
 
-    public PlayerState findPlayerStateById(int id) {
-        for(PlayerState playerState : gPlayerStates) {
+    public ClientInfo findClientInfoById(int id) {
+        for(ClientInfo playerState : gClientInfos) {
             if(playerState.getId() == id) {
                 return playerState;
             }
@@ -52,8 +69,32 @@ public class GameState {
     }
 
     public void draw(Canvas canvas) {
-        for(PlayerState playerState : gPlayerStates) {
+        for(ClientInfo playerState : gClientInfos) {
             playerState.draw(canvas);
         }
     }
+
+    public int state() {
+        return gState;
+    }
+
+    public void state(int state) {
+        gState = state;
+    }
+
+//    public boolean gameIsAboutToStart() {
+//        return gGameIsAboutToStart;
+//    }
+
+//    public void gameIsAboutToStart(boolean value) {
+//        gGameIsAboutToStart = value;
+//    }
+
+//    public boolean gameIsInPlay() {
+//        return gGameIsInPlay;
+//    }
+
+//    public void gameIsInPlay(boolean value) {
+//        gGameIsInPlay = value;
+//    }
 }

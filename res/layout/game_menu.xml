@@ -32,4 +32,12 @@ android:background="#000">
     android:text="Find"
     android:onClick="buttonHandler"/>
 
+    <ToggleButton
+    android:id="@+id/ready_button"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:textOn="Ready"
+    android:textOff="Not Ready"
+    android:onClick="buttonHandler"/>
+
 </LinearLayout>

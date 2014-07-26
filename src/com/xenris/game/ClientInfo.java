@@ -3,14 +3,15 @@ package com.xenris.game;
 import android.graphics.*;
 import java.io.*;
 
-public class PlayerState {
+public class ClientInfo {
     private static final Paint gPaint = new Paint();
     private int gId;
     private int gX;
     private int gY;
     private int gColor;
+    private boolean gReady = false;
 
-    public PlayerState(int id) {
+    public ClientInfo(int id) {
         gId = id;
         gColor = Color.BLUE;
     }
@@ -43,11 +44,20 @@ public class PlayerState {
         gColor = color;
     }
 
-    public PlayerState(DataInputStream dataInputStream) throws IOException {
+    public boolean isReady() {
+        return gReady;
+    }
+
+    public void setReady(boolean ready) {
+        gReady = ready;
+    }
+
+    public ClientInfo(DataInputStream dataInputStream) throws IOException {
         gId = dataInputStream.readInt();
         gX = dataInputStream.readInt();
         gY = dataInputStream.readInt();
         gColor = dataInputStream.readInt();
+        gReady = dataInputStream.readBoolean();
     }
 
     public void write(DataOutputStream dataOutputStream) throws IOException {
@@ -55,12 +65,14 @@ public class PlayerState {
         dataOutputStream.writeInt(gX);
         dataOutputStream.writeInt(gY);
         dataOutputStream.writeInt(gColor);
+        dataOutputStream.writeBoolean(gReady);
     }
 
-    public void setValues(PlayerState otherPlayerState) {
-        gX = otherPlayerState.getX();
-        gY = otherPlayerState.getY();
-        gColor = otherPlayerState.getColor();
+    public void setValues(ClientInfo otherClientInfo) {
+        gX = otherClientInfo.getX();
+        gY = otherClientInfo.getY();
+        gColor = otherClientInfo.getColor();
+        gReady = otherClientInfo.isReady();
     }
 
     public void draw(Canvas canvas) {

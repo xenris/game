@@ -1,14 +1,13 @@
-package com.xenris.game.server;
+package com.xenris.game;
 
-import com.xenris.game.*;
 import java.io.*;
 
 public class ClientConnection extends Thread {
     private int gConnectionId;
     private DataOutputStream gDataOutputStream;
     private DataInputStream gDataInputStream;
-    private PlayerState gPlayerStateA;
-    private PlayerState gPlayerStateB;
+    private ClientInfo gClientInfoA;
+    private ClientInfo gClientInfoB;
     private boolean gIsClosed = false;
 
     public ClientConnection() {
@@ -36,29 +35,31 @@ public class ClientConnection extends Thread {
 
     @Override
     public void run() {
+        setName("ClientConnection");
+
         while(true) {
             try {
-                gPlayerStateB = new PlayerState(gDataInputStream);
+                gClientInfoB = new ClientInfo(gDataInputStream);
             } catch (IOException e) {
                 break;
             }
 
-            shiftPlayerStates();
+            shiftClientInfos();
         }
 
         close();
     }
 
-    public PlayerState getPlayerState() {
+    public ClientInfo getClientInfo() {
         synchronized (this) {
-            return gPlayerStateA;
+            return gClientInfoA;
         }
     }
 
-    private void shiftPlayerStates() {
+    private void shiftClientInfos() {
         synchronized (this) {
-            gPlayerStateA = gPlayerStateB;
-            gPlayerStateB = null;
+            gClientInfoA = gClientInfoB;
+            gClientInfoB = null;
         }
     }
 

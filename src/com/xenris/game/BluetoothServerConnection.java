@@ -1,20 +1,19 @@
-package com.xenris.game.server;
+package com.xenris.game;
 
-import android.bluetooth.BluetoothSocket;
-import com.xenris.game.*;
+import android.bluetooth.*;
 import java.io.*;
 
-public class BluetoothClientConnection extends ClientConnection {
+public class BluetoothServerConnection extends ServerConnection {
     private BluetoothSocket gBluetoothSocket;
 
-    public BluetoothClientConnection(BluetoothSocket bluetoothSocket) {
+    public BluetoothServerConnection(BluetoothSocket bluetoothSocket, Callbacks callbacks) {
         gBluetoothSocket = bluetoothSocket;
 
         try {
             final OutputStream outputStream = bluetoothSocket.getOutputStream();
             final InputStream inputStream = bluetoothSocket.getInputStream();
 
-            init(outputStream, inputStream);
+            init(outputStream, inputStream, callbacks);
         } catch (IOException e) {
             close();
             return;
