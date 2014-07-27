@@ -27,8 +27,6 @@ public class ServerConnection extends Thread {
             Log.message(Log.tag, "Error: failed to get connection ID in ServerConnection");
             return;
         }
-
-        start();
     }
 
     @Override
@@ -54,7 +52,7 @@ public class ServerConnection extends Thread {
         try {
             clientInfo.write(gDataOutputStream);
         } catch (IOException e) {
-            Log.message(Log.tag, "Error: failed to send player state in ServerConnection");
+//            Log.message(Log.tag, "Error: failed to send player state in ServerConnection");
         }
     }
 

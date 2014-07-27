@@ -4,11 +4,13 @@ import android.app.*;
 import android.bluetooth.*;
 import android.content.*;
 import java.io.*;
+import java.util.*;
 
 public class Bluetooth {
     private BluetoothAdapter gBluetoothAdapter;
     private AcceptThread gAcceptThread;
     private Activity gActivity;
+    private Callbacks gCallbacks;
 
     public Bluetooth(Activity activity) {
         gActivity = activity;
@@ -37,7 +39,18 @@ public class Bluetooth {
         }
     }
 
-    protected void startSearching() {
+    public ArrayList<BluetoothDevice> getDevices() {
+        ArrayList<BluetoothDevice> devices = new ArrayList<BluetoothDevice>();
+        for(BluetoothDevice device : gBluetoothAdapter.getBondedDevices()) {
+            devices.add(device);
+        }
+
+        return devices;
+    }
+
+    public void startSearching(Callbacks callbacks) {
+        gCallbacks = callbacks;
+
         final IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
         gActivity.registerReceiver(receiver, filter);
         gBluetoothAdapter.startDiscovery();
@@ -50,8 +63,14 @@ public class Bluetooth {
         } catch (IllegalArgumentException e) { }
     }
 
-    public void createServerConnection(BluetoothDevice bluetoothDevice, ServerConnection.Callbacks callbacks) {
-        new CreateConnection(bluetoothDevice, callbacks);
+    public BluetoothServerConnection connect(BluetoothDevice bluetoothDevice, ServerConnection.Callbacks callbacks) {
+        try {
+            final BluetoothSocket bluetoothSocket = bluetoothDevice.createRfcommSocketToServiceRecord(Constants.uuid);
+            bluetoothSocket.connect();
+            return new BluetoothServerConnection(bluetoothSocket, callbacks);
+        } catch (IOException e) {
+            return null;
+        }
     }
 
 //    @Override
@@ -71,57 +90,56 @@ public class Bluetooth {
             final String action = intent.getAction();
 
             if(action.equals(BluetoothDevice.ACTION_FOUND)) {
-                BluetoothDevice bluetoothDevice = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                onDeviceFound(bluetoothDevice);
+                final BluetoothDevice bluetoothDevice = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                gCallbacks.onDeviceFound(bluetoothDevice);
             }
         }
     };
 
-    public void onDeviceFound(BluetoothDevice bluetoothDevice) {
+    public interface Callbacks {
+        public void onDeviceFound(BluetoothDevice bluetoothDevice);
     }
 
-    public void onConnectionMade(ServerConnection serverConnection) {
-    }
+//    private class CreateConnection extends Thread {
+//        private BluetoothDevice gBluetoothDevice;
+//        private ServerConnection.Callbacks gCallbacks;
 
-    public void onConnectionFailed() {
-    }
+//        public CreateConnection(BluetoothDevice bluetoothDevice, ServerConnection.Callbacks callbacks) {
+//            gBluetoothDevice = bluetoothDevice;
+//            gCallbacks = callbacks;
+//            start();
+//        }
 
-    private class CreateConnection extends Thread {
-        private BluetoothDevice gBluetoothDevice;
-        private ServerConnection.Callbacks gCallbacks;
-
-        public CreateConnection(BluetoothDevice bluetoothDevice, ServerConnection.Callbacks callbacks) {
-            gBluetoothDevice = bluetoothDevice;
-            gCallbacks = callbacks;
-            start();
-        }
-
-        @Override
-        public void run() {
-            if(gBluetoothDevice != null) {
-                try {
-                    BluetoothSocket bluetoothSocket = gBluetoothDevice.createRfcommSocketToServiceRecord(Constants.uuid);
-                    bluetoothSocket.connect();
-                    onConnectionMade(new BluetoothServerConnection(bluetoothSocket, gCallbacks));
-                } catch (IOException e) {
-                    onConnectionFailed();
-                }
-            }
-        }
-    }
+//        @Override
+//        public void run() {
+//            if(gBluetoothDevice != null) {
+//                try {
+//                    BluetoothSocket bluetoothSocket = gBluetoothDevice.createRfcommSocketToServiceRecord(Constants.uuid);
+//                    bluetoothSocket.connect();
+//                    onConnectionMade(new BluetoothServerConnection(bluetoothSocket, gCallbacks));
+//                } catch (IOException e) {
+//                    onConnectionFailed();
+//                }
+//            }
+//        }
+//    }
 
     public void startSharing(Server server) {
         if(gBluetoothAdapter != null) {
-            gAcceptThread = new AcceptThread(server);
-            Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-            intent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 200);
-            gActivity.startActivityForResult(intent, Constants.START_SHARING);
+            if(gAcceptThread == null) {
+                gAcceptThread = new AcceptThread(server);
+//                Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+//                intent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 200);
+//                gActivity.startActivityForResult(intent, Constants.START_SHARING);
+                gAcceptThread.start();
+            }
         }
     }
 
     public void stopSharing() {
         if(gAcceptThread != null) {
             gAcceptThread.close();
+            gAcceptThread = null;
         }
     }
 

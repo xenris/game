@@ -1,9 +1,13 @@
 package com.xenris.game;
 
+import android.app.*;
+import android.bluetooth.*;
 import android.os.*;
 import android.view.*;
+import android.widget.*;
+import android.widget.Toast;
 import android.widget.ToggleButton;
-import java.util.LinkedList;
+import java.util.*;
 
 public class Client extends BaseActivity
     implements
@@ -11,7 +15,7 @@ public class Client extends BaseActivity
         Runnable,
         View.OnTouchListener {
 
-//    public Server gServer; // XXX Idealy this won't be needed. Just an extra thing to be null unexpectedly.
+    public Server gServer; // XXX Idealy this won't be needed. Just an extra thing to be null unexpectedly.
     private ServerConnection gServerConnection;
 //    private int myId;
     private ClientInfo gMe;
@@ -30,6 +34,11 @@ public class Client extends BaseActivity
     private GameView gGameView;
 //    private Thread gGameThread;
 
+    private Bluetooth gBluetooth;
+
+    private AlertDialog gSearchAlertDialog;
+    private ArrayList<BluetoothDevice> gBluetoothDevices;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -42,14 +51,17 @@ public class Client extends BaseActivity
 
         setupHandlers();
 
-        final Server server = new Server();
-        gServerConnection = server.createConnection(this);
-        server.start();
+        gServer = new Server();
+        gServerConnection = gServer.createConnection(this);
+        gServerConnection.start();
+        gServer.start();
         gMe = new ClientInfo(gServerConnection.getConnectionId());
 
         gGameThread = new Thread(this);
         gGameThread.setName("Client Game Loop Thread");
         gGameThread.start();
+
+        gBluetooth = new Bluetooth(this);
     }
 
     private void setupHandlers() {
@@ -96,6 +108,8 @@ public class Client extends BaseActivity
 
     @Override
     public void onDestroy() {
+        gBluetooth.stopSharing();
+
         gRunning = false;
 
         try {
@@ -127,9 +141,9 @@ public class Client extends BaseActivity
         if(id == R.id.go_button) {
             go();
         } else if(id == R.id.share_button) {
-//            share();
+            share();
         } else if(id == R.id.find_button) {
-//            find();
+            find();
         } else if(id == R.id.ready_button) {
             final boolean ready = ((ToggleButton)view).isChecked();
             gMe.setReady(ready);
@@ -148,7 +162,7 @@ public class Client extends BaseActivity
             final long currentTime = System.currentTimeMillis();
 
             // Send 10 times per second.
-            if((currentTime - previousTime) >= 10) {
+            if((currentTime - previousTime) >= 100) {
                 gServerConnection.sendClientInfo(gMe);
                 previousTime = currentTime;
             }
@@ -194,13 +208,39 @@ public class Client extends BaseActivity
         return gMenuView.getVisibility() == View.VISIBLE;
     }
 
-//    private void share() {
-//        startSharing(gServer);
-//    }
+    private void share() {
+        if(gBluetooth.isBluetoothEnabled()) {
+            gBluetooth.startSharing(gServer);
+        } else {
+            Toast.makeText(this, "Enable bluetooth first", Toast.LENGTH_SHORT).show();
+        }
+    }
 
-//    private void find() {
-//        openSearchDialog(this);
-//    }
+    private void find() {
+        final ServerFinderDialog.Callbacks callbacks = new ServerFinderDialog.Callbacks() {
+            @Override
+            public void onServerSelected(ServerFinderDialog dialog, BluetoothDevice device) {
+                // TODO Show "connecting" progress dialog. Have onConnectionMade and onConnectionFailed callbacks.
+                final ServerConnection newServerConnection = gBluetooth.connect(device, Client.this);
+                if(newServerConnection != null) {
+                    gServerConnection.close();
+                    gServerConnection = newServerConnection;
+                    gServerConnection.start();
+                    gMe = new ClientInfo(gServerConnection.getConnectionId());
+                } else {
+                    // TODO Show connection error message.
+                    Log.message("could not connect");
+                }
+            }
+
+            @Override
+            public void onNothingSelected(ServerFinderDialog dialog) {
+            }
+        };
+
+        final ServerFinderDialog dialog = new ServerFinderDialog(this, callbacks, gBluetooth);
+        dialog.show();
+    }
 
 //    private class GameThread extends Thread {
 //        private Handler gHandler;
