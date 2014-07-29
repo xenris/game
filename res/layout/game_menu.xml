@@ -12,13 +12,6 @@ android:background="#000">
     android:text="Game Menu"/>
 
     <Button
-    android:id="@+id/go_button"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="Go"
-    android:onClick="buttonHandler"/>
-
-    <Button
     android:id="@+id/share_button"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"

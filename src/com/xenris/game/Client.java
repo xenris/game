@@ -138,9 +138,7 @@ public class Client extends BaseActivity
     public void buttonHandler(View view) {
         final int id = view.getId();
 
-        if(id == R.id.go_button) {
-            go();
-        } else if(id == R.id.share_button) {
+        if(id == R.id.share_button) {
             share();
         } else if(id == R.id.find_button) {
             find();
@@ -197,11 +195,6 @@ public class Client extends BaseActivity
         }
 
         return true;
-    }
-
-    private void go() {
-        final MyApplication application = (MyApplication)getApplication();
-        application.getUiHandler().sendEmptyMessage(Constants.HIDE_GAME_MENU);
     }
 
     private boolean gameMenuIsVisible() {
