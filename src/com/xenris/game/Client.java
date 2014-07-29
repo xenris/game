@@ -43,6 +43,7 @@ public class Client extends BaseActivity
         super.onCreate();
 
         gGameView = new GameView(this);
+        gGameView.setVisibility(View.GONE);
         addView(gGameView);
         gMenuView = addView(R.layout.game_menu);
 
