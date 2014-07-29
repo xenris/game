@@ -10,10 +10,22 @@ public class ClientInfo {
     private int gY;
     private int gColor;
     private boolean gReady = false;
+    private boolean gIsClients = false;
 
     public ClientInfo(int id) {
         gId = id;
         gColor = Color.BLUE;
+    }
+
+    public ClientInfo(int id, int colour) {
+        gId = id;
+        gColor = colour;
+    }
+
+    public ClientInfo(int id, int colour, boolean isClients) {
+        gId = id;
+        gColor = colour;
+        gIsClients = isClients;
     }
 
     public int getId() {
@@ -76,7 +88,12 @@ public class ClientInfo {
     }
 
     public void draw(Canvas canvas) {
-        gPaint.setColor(gColor);
-        canvas.drawCircle(gX, gY, 200, gPaint);
+        if(gIsClients) {
+            gPaint.setColor(Color.RED);
+            canvas.drawCircle(gX, gY, 50, gPaint);
+        } else {
+            gPaint.setColor(gColor);
+            canvas.drawCircle(gX, gY, 200, gPaint);
+        }
     }
 }

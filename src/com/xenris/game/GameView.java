@@ -6,6 +6,7 @@ import android.view.*;
 
 public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     private GameState gGameState;
+    private ClientInfo gClientInfo;
     private RenderThread gRenderThread;
 
     public GameView(Context context) {
@@ -49,6 +50,12 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         }
     }
 
+    public void setClientInfoToDraw(ClientInfo clientInfo) {
+        synchronized(this) {
+            gClientInfo = clientInfo;
+        }
+    }
+
     public void surfaceCreated(SurfaceHolder surfaceHolder) {
         gRenderThread = new RenderThread();
         gRenderThread.start();
@@ -68,6 +75,12 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             gGameState.draw(canvas);
         } else {
             canvas.drawColor(Color.RED);
+        }
+
+        if(gClientInfo != null) {
+            gClientInfo.draw(canvas);
+        } else {
+            canvas.drawColor(Color.YELLOW);
         }
     }
 }

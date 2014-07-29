@@ -2,6 +2,7 @@ package com.xenris.game;
 
 import android.app.*;
 import android.bluetooth.*;
+import android.graphics.*;
 import android.os.*;
 import android.view.*;
 import android.widget.*;
@@ -53,7 +54,8 @@ public class Client extends BaseActivity
         gServerConnection = gServer.createConnection(this);
         gServerConnection.start();
         gServer.start();
-        gMe = new ClientInfo(gServerConnection.getConnectionId());
+        gMe = new ClientInfo(gServerConnection.getConnectionId(), Color.BLUE, true);
+        gGameView.setClientInfoToDraw(gMe);
 
         gGameThread = new Thread(this);
         gGameThread.setName("Client Game Loop Thread");
@@ -186,7 +188,8 @@ public class Client extends BaseActivity
                     gServerConnection.close();
                     gServerConnection = newServerConnection;
                     gServerConnection.start();
-                    gMe = new ClientInfo(gServerConnection.getConnectionId());
+                    gMe = new ClientInfo(gServerConnection.getConnectionId(), Color.BLUE, true);
+                    gGameView.setClientInfoToDraw(gMe);
                 } else {
                     // TODO Show connection error message.
                     Log.message("could not connect");
