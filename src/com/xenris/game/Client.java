@@ -74,11 +74,13 @@ public class Client extends BaseActivity
         @Override
         public boolean handleMessage(Message message) {
             switch(message.what) {
-                case Constants.HIDE_GAME_MENU:
-                    gMenuView.setVisibility(View.GONE);
-                    break;
-                case Constants.SHOW_GAME_MENU:
+                case Constants.SWITCH_TO_GAME_MENU:
                     gMenuView.setVisibility(View.VISIBLE);
+                    gGameView.setVisibility(View.GONE);
+                    break;
+                case Constants.SWITCH_TO_GAME_VIEW:
+                    gMenuView.setVisibility(View.GONE);
+                    gGameView.setVisibility(View.VISIBLE);
                     break;
             }
 
@@ -140,7 +142,7 @@ public class Client extends BaseActivity
                 gGameView.setGameStateToDraw(gameState);
                 if(gameState.state() == GameState.IN_PLAY) {
                     if(gameMenuIsVisible()) {
-                        uiHandler.sendEmptyMessage(Constants.HIDE_GAME_MENU);
+                        uiHandler.sendEmptyMessage(Constants.SWITCH_TO_GAME_VIEW);
                     }
                     gMe.setReady(false);
                 }
