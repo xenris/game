@@ -11,8 +11,6 @@ public class GameState {
 
     private ArrayList<ClientInfo> gClientInfos;
     private int gState = MAIN_MENU;
-//    private boolean gGameIsAboutToStart;
-//    private boolean gGameIsInPlay;
 
     public GameState() {
         gClientInfos = new ArrayList<ClientInfo>();
@@ -28,9 +26,6 @@ public class GameState {
         }
 
         gState = dataInputStream.readInt();
-
-//        gGameIsAboutToStart = dataInputStream.readBoolean();
-//        gGameIsInPlay = dataInputStream.readBoolean();
     }
 
     public void write(DataOutputStream dataOutputStream) throws IOException {
@@ -41,9 +36,6 @@ public class GameState {
         }
 
         dataOutputStream.writeInt(gState);
-
-//        dataOutputStream.writeBoolean(gGameIsAboutToStart);
-//        dataOutputStream.writeBoolean(gGameIsInPlay);
     }
 
     public void addClientInfo(int id) {
@@ -81,20 +73,4 @@ public class GameState {
     public void state(int state) {
         gState = state;
     }
-
-//    public boolean gameIsAboutToStart() {
-//        return gGameIsAboutToStart;
-//    }
-
-//    public void gameIsAboutToStart(boolean value) {
-//        gGameIsAboutToStart = value;
-//    }
-
-//    public boolean gameIsInPlay() {
-//        return gGameIsInPlay;
-//    }
-
-//    public void gameIsInPlay(boolean value) {
-//        gGameIsInPlay = value;
-//    }
 }

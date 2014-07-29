@@ -17,7 +17,6 @@ public class Client extends BaseActivity
 
     public Server gServer; // XXX Idealy this won't be needed. Just an extra thing to be null unexpectedly.
     private ServerConnection gServerConnection;
-//    private int myId;
     private ClientInfo gMe;
 
     private boolean gRunning;
@@ -32,7 +31,6 @@ public class Client extends BaseActivity
 
     private View gMenuView;
     private GameView gGameView;
-//    private Thread gGameThread;
 
     private Bluetooth gBluetooth;
 
@@ -68,7 +66,6 @@ public class Client extends BaseActivity
         final MyApplication application = (MyApplication)getApplication();
 
         application.setUiHandler(new Handler(gUiHandlerCallback));
-//        application.setGameHandler(new GameThread().getHandler());
     }
 
     private Handler.Callback gUiHandlerCallback = new Handler.Callback() {
@@ -87,25 +84,6 @@ public class Client extends BaseActivity
         }
     };
 
-//    private Handler.Callback gGameHandlerCallback = new Handler.Callback() {
-//        @Override
-//        public boolean handleMessage(Message message) {
-//            final MyApplication application = (MyApplication)getApplication();
-
-//            switch(message.what) {
-//                case Constants.START_GAME:
-//                    application.getUiHandler().sendEmptyMessage(Constants.HIDE_GAME_MENU);
-//                    break;
-//                case Constants.SHARE_SERVER:
-//                    break;
-//                case Constants.FIND_SERVER:
-//                    break;
-//            }
-
-//            return true;
-//        }
-//    };
-
     @Override
     public void onDestroy() {
         gBluetooth.stopSharing();
@@ -122,18 +100,7 @@ public class Client extends BaseActivity
     @Override
     public void onNewGameState(GameState gameState) {
         gGameStateQueue.add(gameState);
-//        gGameView.setGameStateToDraw(gameState);
-
-        // TODO Add to a GameState queue for the GameThread to use when needed.
     }
-
-//    @Override
-//    public void onConnectionMade(ServerConnection serverConnection) {
-//        // XXX Make sure this doesn't cause a crash.
-//        gServer = null;
-//        gServerConnection.close();
-//        gServerConnection = serverConnection;
-//    }
 
     public void buttonHandler(View view) {
         final int id = view.getId();
@@ -234,29 +201,4 @@ public class Client extends BaseActivity
         final ServerFinderDialog dialog = new ServerFinderDialog(this, callbacks, gBluetooth);
         dialog.show();
     }
-
-//    private class GameThread extends Thread {
-//        private Handler gHandler;
-
-//        @Override
-//        public void run() {
-//            setName("GameThread");
-
-//            Looper.prepare();
-
-//            gHandler = new Handler(gGameHandlerCallback);
-
-//            Looper.loop();
-//        }
-
-//        public Handler getHandler() {
-//            start();
-
-//            while(gHandler == null) {
-//                Thread.yield();
-//            }
-
-//            return gHandler;
-//        }
-//    }
 }

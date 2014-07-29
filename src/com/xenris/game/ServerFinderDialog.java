@@ -37,7 +37,6 @@ public class ServerFinderDialog extends AlertDialog
     }
 
     public void setupDialog(Context context) {
-//        bluetoothDevices = new ArrayList<BluetoothDevice>();
         gBluetoothDevices = gBluetooth.getDevices();
 
         final ArrayList<String> stringList = new ArrayList<String>();

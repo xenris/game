@@ -56,8 +56,6 @@ public class Server extends Thread {
             if(everyoneIsReady) {
                 gGameState.state(GameState.COUNTDOWN);
             }
-//            gGameState.gameIsAboutToStart(everyoneIsReady);
-//            gGameState.gameIsInPlay(everyoneIsReady);
         }
 
         // TODO Step game.

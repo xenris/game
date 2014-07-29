@@ -5,7 +5,6 @@ import android.graphics.*;
 import android.view.*;
 
 public class GameView extends SurfaceView implements SurfaceHolder.Callback {
-//    private SurfaceView gSurfaceView;
     private GameState gGameState;
     private RenderThread gRenderThread;
 
