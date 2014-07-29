@@ -8,6 +8,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     private GameState gGameState;
     private ClientInfo gClientInfo;
     private RenderThread gRenderThread;
+    private float gWidth;
+    private float gHeight;
 
     public GameView(Context context) {
         super(context);
@@ -62,6 +64,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     public void surfaceChanged(SurfaceHolder surfaceHolder, int format, int width, int height) {
+        gWidth = width;
+        gHeight = height;
     }
 
     public void surfaceDestroyed(SurfaceHolder surfaceHolder) {
