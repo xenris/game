@@ -154,13 +154,15 @@ public class Client extends BaseActivity
 
     public boolean onTouch(View view, MotionEvent event) {
         final int action = event.getActionMasked();
-        final int x = (int)event.getX();
-        final int y = (int)event.getY();
+        final float x = event.getX() / gGameView.getWidth();
+        final float y = event.getY() / gGameView.getHeight();
+        final float sx = x * 800;
+        final float sy = y * 480;
 
         if(action == MotionEvent.ACTION_MOVE) {
             // XXX gMe probably needs to be synchronized.
-            gMe.setX(x);
-            gMe.setY(y);
+            gMe.setX((int)sx);
+            gMe.setY((int)sy);
         }
 
         return true;

@@ -70,6 +70,10 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     public void onDraw(Canvas canvas) {
+        final float sw = gWidth / 800;
+        final float sh = gHeight / 480;
+        canvas.scale(sw, sh, 0, 0);
+
         if(gGameState != null) {
             canvas.drawColor(Color.GREEN);
             gGameState.draw(canvas);
