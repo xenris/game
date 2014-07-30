@@ -41,9 +41,10 @@ public class Bluetooth {
 
     public ArrayList<BluetoothDevice> getDevices() {
         ArrayList<BluetoothDevice> devices = new ArrayList<BluetoothDevice>();
-        for(BluetoothDevice device : gBluetoothAdapter.getBondedDevices()) {
-            devices.add(device);
-        }
+        // FIXME Connecting using pre-paired devices doesn't seem to work.
+//        for(BluetoothDevice device : gBluetoothAdapter.getBondedDevices()) {
+//            devices.add(device);
+//        }
 
         return devices;
     }
