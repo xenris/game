@@ -128,9 +128,9 @@ public class Bluetooth {
         if(gBluetoothAdapter != null) {
             if(gAcceptThread == null) {
                 gAcceptThread = new AcceptThread(server);
-//                Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-//                intent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 200);
-//                gActivity.startActivityForResult(intent, Constants.START_SHARING);
+                Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+                intent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, Constants.DISCOVERABLE_TIME);
+                gActivity.startActivityForResult(intent, Constants.START_SHARING);
                 gAcceptThread.start();
             }
         }

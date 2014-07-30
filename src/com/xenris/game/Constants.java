@@ -15,5 +15,7 @@ public class Constants {
     public static final int BACK_PRESS_DELAY = 1000;
     public static final int BACK_PRESS_COUNT = 3;
 
+    public static final int DISCOVERABLE_TIME = 30;
+
     public static final UUID uuid = new UUID(928409374, 170008956);
 }
