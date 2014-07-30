@@ -8,10 +8,12 @@ import android.view.*;
 import android.widget.*;
 import android.widget.Toast;
 import android.widget.ToggleButton;
+import com.xenris.game.Bluetooth.CreateConnectionCallbacks;
 import java.util.*;
 
 public class Client extends BaseActivity
     implements
+        CreateConnectionCallbacks,
         Runnable,
         View.OnTouchListener {
 
@@ -83,6 +85,12 @@ public class Client extends BaseActivity
                 case Constants.SWITCH_TO_GAME_VIEW:
                     gMenuView.setVisibility(View.GONE);
                     gGameView.setVisibility(View.VISIBLE);
+                    break;
+                case Constants.CONNECTION_MADE:
+                    Toast.makeText(Client.this, "Connection made!", Toast.LENGTH_SHORT).show();
+                    break;
+                case Constants.CONNECTION_FAILED:
+                    Toast.makeText(Client.this, "Connection failed", Toast.LENGTH_SHORT).show();
                     break;
             }
 
@@ -185,18 +193,8 @@ public class Client extends BaseActivity
         final ServerFinderDialog.Callbacks callbacks = new ServerFinderDialog.Callbacks() {
             @Override
             public void onServerSelected(ServerFinderDialog dialog, BluetoothDevice device) {
-                // TODO Show "connecting" progress dialog. Have onConnectionMade and onConnectionFailed callbacks.
-                final ServerConnection newServerConnection = gBluetooth.connect(device);
-                if(newServerConnection != null) {
-                    gServerConnection.close();
-                    gServerConnection = newServerConnection;
-                    gServerConnection.start();
-                    gMe = new ClientInfo(gServerConnection.getConnectionId(), Color.BLUE, true);
-                    gGameView.setClientInfoToDraw(gMe);
-                } else {
-                    // TODO Show connection error message.
-                    Log.message("could not connect");
-                }
+                // TODO Show "connecting" progress dialog.
+                gBluetooth.connect(device, Client.this);
             }
 
             @Override
@@ -206,6 +204,26 @@ public class Client extends BaseActivity
 
         final ServerFinderDialog dialog = new ServerFinderDialog(this, callbacks, gBluetooth);
         dialog.show();
+    }
+
+    @Override
+    public void onConnectionMade(BluetoothServerConnection bluetoothServerConnection) {
+        gServerConnection.close();
+        gServerConnection = bluetoothServerConnection;
+        gServerConnection.start();
+        gMe = new ClientInfo(gServerConnection.getConnectionId(), Color.BLUE, true);
+        gGameView.setClientInfoToDraw(gMe);
+
+        final MyApplication application = (MyApplication)getApplication();
+        final Handler uiHandler = application.getUiHandler();
+        uiHandler.sendEmptyMessage(Constants.CONNECTION_MADE);
+    }
+
+    @Override
+    public void onConnectionFailed() {
+        final MyApplication application = (MyApplication)getApplication();
+        final Handler uiHandler = application.getUiHandler();
+        uiHandler.sendEmptyMessage(Constants.CONNECTION_FAILED);
     }
 
     @Override

@@ -11,6 +11,8 @@ public class Constants {
     public static final int FIND_SERVER = 5;
     public static final int SWITCH_TO_GAME_MENU = 6;
     public static final int SWITCH_TO_GAME_VIEW = 7;
+    public static final int CONNECTION_MADE = 8;
+    public static final int CONNECTION_FAILED = 9;
 
     public static final int BACK_PRESS_DELAY = 1000;
     public static final int BACK_PRESS_COUNT = 3;

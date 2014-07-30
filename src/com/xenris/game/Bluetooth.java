@@ -64,14 +64,9 @@ public class Bluetooth {
         } catch (IllegalArgumentException e) { }
     }
 
-    public BluetoothServerConnection connect(BluetoothDevice bluetoothDevice) {
-        try {
-            final BluetoothSocket bluetoothSocket = bluetoothDevice.createRfcommSocketToServiceRecord(Constants.uuid);
-            bluetoothSocket.connect();
-            return new BluetoothServerConnection(bluetoothSocket);
-        } catch (IOException e) {
-            return null;
-        }
+    public void connect(BluetoothDevice bluetoothDevice, CreateConnectionCallbacks callbacks) {
+        final CreateConnection createConnection = new CreateConnection(bluetoothDevice, callbacks);
+        createConnection.start();
     }
 
 //    @Override
@@ -101,29 +96,26 @@ public class Bluetooth {
         public void onDeviceFound(BluetoothDevice bluetoothDevice);
     }
 
-//    private class CreateConnection extends Thread {
-//        private BluetoothDevice gBluetoothDevice;
-//        private ServerConnection.Callbacks gCallbacks;
+    private class CreateConnection extends Thread {
+        private BluetoothDevice gBluetoothDevice;
+        private CreateConnectionCallbacks gCallbacks;
 
-//        public CreateConnection(BluetoothDevice bluetoothDevice, ServerConnection.Callbacks callbacks) {
-//            gBluetoothDevice = bluetoothDevice;
-//            gCallbacks = callbacks;
-//            start();
-//        }
+        public CreateConnection(BluetoothDevice bluetoothDevice, CreateConnectionCallbacks callbacks) {
+            gBluetoothDevice = bluetoothDevice;
+            gCallbacks = callbacks;
+        }
 
-//        @Override
-//        public void run() {
-//            if(gBluetoothDevice != null) {
-//                try {
-//                    BluetoothSocket bluetoothSocket = gBluetoothDevice.createRfcommSocketToServiceRecord(Constants.uuid);
-//                    bluetoothSocket.connect();
-//                    onConnectionMade(new BluetoothServerConnection(bluetoothSocket, gCallbacks));
-//                } catch (IOException e) {
-//                    onConnectionFailed();
-//                }
-//            }
-//        }
-//    }
+        @Override
+        public void run() {
+            try {
+                final BluetoothSocket bluetoothSocket = gBluetoothDevice.createRfcommSocketToServiceRecord(Constants.uuid);
+                bluetoothSocket.connect();
+                gCallbacks.onConnectionMade(new BluetoothServerConnection(bluetoothSocket));
+            } catch (IOException e) {
+                gCallbacks.onConnectionFailed();
+            }
+        }
+    }
 
     public void startSharing(Server server) {
         if(gBluetoothAdapter != null) {
@@ -171,5 +163,10 @@ public class Bluetooth {
         public void close() {
             Util.close(gBluetoothServerSocket);
         }
+    }
+
+    public interface CreateConnectionCallbacks {
+        public void onConnectionMade(BluetoothServerConnection bluetoothServerConnection);
+        public void onConnectionFailed();
     }
 }
