@@ -1,23 +1,22 @@
 package com.xenris.game;
 
 import java.io.*;
+import java.util.*;
 
 public class ServerConnection extends Thread {
     private int gConnectionId;
-    private Callbacks gCallbacks;
     private DataOutputStream gDataOutputStream;
     private DataInputStream gDataInputStream;
+    private LinkedList<GameState> gGameStateQueue = new LinkedList<GameState>();
 
     public ServerConnection() {
     }
 
-    public ServerConnection(OutputStream outputStream, InputStream inputStream, Callbacks callbacks) {
-        init(outputStream, inputStream, callbacks);
+    public ServerConnection(OutputStream outputStream, InputStream inputStream) {
+        init(outputStream, inputStream);
     }
 
-    protected void init(OutputStream outputStream, InputStream inputStream, Callbacks callbacks) {
-        gCallbacks = callbacks;
-
+    protected void init(OutputStream outputStream, InputStream inputStream) {
         gDataOutputStream = new DataOutputStream(outputStream);
         gDataInputStream = new DataInputStream(inputStream);
 
@@ -42,7 +41,7 @@ public class ServerConnection extends Thread {
                 break;
             }
 
-            gCallbacks.onNewGameState(gameState);
+            gGameStateQueue.add(gameState);
         }
 
         close();
@@ -65,7 +64,7 @@ public class ServerConnection extends Thread {
         Util.close(gDataInputStream);
     }
 
-    public interface Callbacks {
-        public void onNewGameState(GameState gameState);
+    public GameState getNextGameState() {
+        return gGameStateQueue.poll();
     }
 }

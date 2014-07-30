@@ -64,11 +64,11 @@ public class Bluetooth {
         } catch (IllegalArgumentException e) { }
     }
 
-    public BluetoothServerConnection connect(BluetoothDevice bluetoothDevice, ServerConnection.Callbacks callbacks) {
+    public BluetoothServerConnection connect(BluetoothDevice bluetoothDevice) {
         try {
             final BluetoothSocket bluetoothSocket = bluetoothDevice.createRfcommSocketToServiceRecord(Constants.uuid);
             bluetoothSocket.connect();
-            return new BluetoothServerConnection(bluetoothSocket, callbacks);
+            return new BluetoothServerConnection(bluetoothSocket);
         } catch (IOException e) {
             return null;
         }

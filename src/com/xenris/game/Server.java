@@ -83,7 +83,7 @@ public class Server extends Thread {
         }
     }
 
-    public ServerConnection createConnection(ServerConnection.Callbacks callbacks) {
+    public ServerConnection createConnection() {
         // s = for server
         // c = for client
         final PipedOutputStream oss = new PipedOutputStream();
@@ -100,7 +100,7 @@ public class Server extends Thread {
 
         addClientConnection(new ClientConnection(oss, iss));
 
-        return new ServerConnection(osc, isc, callbacks);
+        return new ServerConnection(osc, isc);
     }
 
     public void addClientConnection(ClientConnection clientConnection) {

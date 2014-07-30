@@ -12,7 +12,6 @@ import java.util.*;
 
 public class Client extends BaseActivity
     implements
-        ServerConnection.Callbacks,
         Runnable,
         View.OnTouchListener {
 
@@ -22,8 +21,6 @@ public class Client extends BaseActivity
 
     private boolean gRunning;
     private Thread gGameThread;
-
-    private LinkedList<GameState> gGameStateQueue = new LinkedList<GameState>();
 
     // XXX XXX XXX
     // Put game touch state here and use to send to server and draw positional info.
@@ -56,7 +53,7 @@ public class Client extends BaseActivity
         setupHandlers();
 
         gServer = new Server();
-        gServerConnection = gServer.createConnection(this);
+        gServerConnection = gServer.createConnection();
         gServerConnection.start();
         gServer.start();
         gMe = new ClientInfo(gServerConnection.getConnectionId(), Color.BLUE, true);
@@ -106,11 +103,6 @@ public class Client extends BaseActivity
         super.onDestroy();
     }
 
-    @Override
-    public void onNewGameState(GameState gameState) {
-        gGameStateQueue.add(gameState);
-    }
-
     public void buttonHandler(View view) {
         final int id = view.getId();
 
@@ -142,8 +134,10 @@ public class Client extends BaseActivity
             }
 
             // If a new GameState has arrived from the server.
-            if(!gGameStateQueue.isEmpty()) {
-                gameState = gGameStateQueue.poll();
+            final GameState newGameState = gServerConnection.getNextGameState();
+
+            if(newGameState != null) {
+                gameState = newGameState;
                 gGameView.setGameStateToDraw(gameState);
                 if(gameState.state() == GameState.IN_PLAY) {
                     if(gameMenuIsVisible()) {
@@ -192,7 +186,7 @@ public class Client extends BaseActivity
             @Override
             public void onServerSelected(ServerFinderDialog dialog, BluetoothDevice device) {
                 // TODO Show "connecting" progress dialog. Have onConnectionMade and onConnectionFailed callbacks.
-                final ServerConnection newServerConnection = gBluetooth.connect(device, Client.this);
+                final ServerConnection newServerConnection = gBluetooth.connect(device);
                 if(newServerConnection != null) {
                     gServerConnection.close();
                     gServerConnection = newServerConnection;
