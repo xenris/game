@@ -1,1 +1,1 @@
-Client -> GameLoop -> Network -> Bluetooth
+Experimental framework for multi-player bluetooth games on android.
