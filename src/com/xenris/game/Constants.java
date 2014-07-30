@@ -12,5 +12,8 @@ public class Constants {
     public static final int SWITCH_TO_GAME_MENU = 6;
     public static final int SWITCH_TO_GAME_VIEW = 7;
 
+    public static final int BACK_PRESS_DELAY = 1000;
+    public static final int BACK_PRESS_COUNT = 3;
+
     public static final UUID uuid = new UUID(928409374, 170008956);
 }

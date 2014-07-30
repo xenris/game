@@ -38,6 +38,10 @@ public class Client extends BaseActivity
     private AlertDialog gSearchAlertDialog;
     private ArrayList<BluetoothDevice> gBluetoothDevices;
 
+    private int backButtonCount = 0;
+    private long backButtonPreviousTime = 0;
+    private boolean backButtonMessageHasBeenShown = false;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -208,5 +212,29 @@ public class Client extends BaseActivity
 
         final ServerFinderDialog dialog = new ServerFinderDialog(this, callbacks, gBluetooth);
         dialog.show();
+    }
+
+    @Override
+    public void onBackPressed() {
+        final long currentTime = System.currentTimeMillis();
+        final long timeDiff = currentTime - backButtonPreviousTime;
+
+        backButtonPreviousTime = currentTime;
+
+        if((timeDiff < Constants.BACK_PRESS_DELAY) || (backButtonCount == 0)) {
+            backButtonCount++;
+        } else {
+            backButtonCount = 1;
+        }
+
+        if(backButtonCount >= Constants.BACK_PRESS_COUNT) {
+            finish();
+        }
+
+        if(!backButtonMessageHasBeenShown) {
+            final String msg = "Press back " + Constants.BACK_PRESS_COUNT + " times to exit";
+            Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+            backButtonMessageHasBeenShown = true;
+        }
     }
 }
